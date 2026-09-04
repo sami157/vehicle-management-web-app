@@ -1,21 +1,178 @@
 // use prisma-next
+// Prisma Next contract for the vehicle-management MVP.
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum UserRole {
+  admin
+  user
+  driver
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+enum VehicleOperationalStatus {
+  available
+  maintenance
+  inactive
+}
+
+enum VehicleType {
+  jac
+  hiace
+}
+
+enum RideStatus {
+  active
+  completed
+  needs_review
+}
+
+enum MaintenanceStatus {
+  active
+  completed
+}
+
+model User {
+  id                         Int                 @id @default(autoincrement())
+  firebaseUid                String              @unique // Firebase user's uid
+  email                      String              @unique
+  name                       String
+  departmentId               Int?
+  department                 Department?         @relation("DepartmentMembers", fields: [departmentId], references: [id], onDelete: Restrict)
+  role                       UserRole            @default(user)
+  avatarUrl                  String?
+  isActive                   Boolean             @default(true)
+  primaryRides               Ride[]
+  createdMaintenanceRecords MaintenanceRecord[]
+  vehicleAssignments         VehicleDriver[]
+  vehicleOwnerships          VehicleUserOwner[]
+  createdAt                  TimestamptzString   @default(now())
+  updatedAt                  temporal.updatedAtString()
+
+  @@index([departmentId])
+  @@index([role, isActive])
+}
+
+model Vehicle {
+  id                 Int                      @id @default(autoincrement())
+  registrationNumber String                   @unique
+  vehicleType        VehicleType?
+  imageUrl           String?
+  capacity           Int
+  operationalStatus  VehicleOperationalStatus @default(available)
+  homeLocationId     Int?
+  homeLocation       Location?                @relation("VehicleHomeLocation", fields: [homeLocationId], references: [id], onDelete: Restrict)
+  notes              String?
+  rides              Ride[]
+  maintenanceRecords MaintenanceRecord[]
+  driverAssignments  VehicleDriver[]
+  userOwners         VehicleUserOwner[]
+  departmentOwners   VehicleDepartmentOwner[]
+  createdAt          TimestamptzString        @default(now())
+  updatedAt          temporal.updatedAtString()
+
+  @@index([operationalStatus])
+  @@index([vehicleType])
+}
+
+model Location {
+  id              Int               @id @default(autoincrement())
+  name            String
+  description     String?
+  address         String?
+  isActive        Boolean           @default(true)
+  sortOrder       Int               @default(0)
+  homeVehicles    Vehicle[]         @relation("VehicleHomeLocation")
+  startRides      Ride[]            @relation("RideStartLocation")
+  destinationRides Ride[]           @relation("RideDestinationLocation")
+  createdAt       TimestamptzString  @default(now())
+  updatedAt       temporal.updatedAtString()
+
+  @@index([isActive, sortOrder])
+}
+
+model Department {
+  id                Int                       @id @default(autoincrement())
+  name              String
+  code              String                    @unique
+  description       String?
+  isActive          Boolean                   @default(true)
+  members           User[]                    @relation("DepartmentMembers")
+  vehicleOwnerships VehicleDepartmentOwner[]
+  createdAt         TimestamptzString         @default(now())
+  updatedAt         temporal.updatedAtString()
+
+  @@index([isActive])
+}
+
+model Ride {
+  id                    Int               @id @default(autoincrement())
+  vehicleId             Int
+  vehicle               Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  primaryRiderId        Int
+  primaryRider          User              @relation(fields: [primaryRiderId], references: [id], onDelete: Restrict)
+  startLocationId       Int
+  startLocation         Location          @relation("RideStartLocation", fields: [startLocationId], references: [id], onDelete: Restrict)
+  destinationLocationId Int
+  destinationLocation   Location          @relation("RideDestinationLocation", fields: [destinationLocationId], references: [id], onDelete: Restrict)
+  notes                 String?
+  status                RideStatus        @default(active)
+  startedAt             TimestamptzString  @default(now())
+  completedAt           TimestamptzString?
+  createdAt             TimestamptzString  @default(now())
+  updatedAt             temporal.updatedAtString()
+
+  @@index([primaryRiderId, startedAt])
+  @@index([vehicleId, startedAt])
+  @@index([status, startedAt])
+  @@index([vehicleId], where: "(status = 'active')", unique: true, name: "ride_active_vehicle")
+  @@index([primaryRiderId], where: "(status = 'active')", unique: true, name: "ride_active_rider")
+}
+
+model MaintenanceRecord {
+  id            Int               @id @default(autoincrement())
+  vehicleId     Int
+  vehicle       Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  status        MaintenanceStatus @default(active)
+  reason        String
+  startedAt     TimestamptzString  @default(now())
+  expectedEndAt TimestamptzString?
+  completedAt   TimestamptzString?
+  internalNotes String?
+  createdById   Int
+  createdBy     User              @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt     TimestamptzString  @default(now())
+  updatedAt     temporal.updatedAtString()
+
+  @@index([vehicleId, status])
+  @@index([expectedEndAt])
+  @@index([vehicleId], where: "(status = 'active')", unique: true, name: "maintenance_active_vehicle")
+}
+
+model VehicleDriver {
+  vehicleId  Int
+  vehicle    Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  driverId   Int
+  driver     User              @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  assignedAt TimestamptzString @default(now())
+
+  @@id([vehicleId, driverId])
+  @@index([driverId])
+}
+
+model VehicleUserOwner {
+  vehicleId Int
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@id([vehicleId, userId])
+  @@index([userId])
+}
+
+model VehicleDepartmentOwner {
+  vehicleId    Int
+  vehicle      Vehicle    @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@id([vehicleId, departmentId])
+  @@index([departmentId])
 }

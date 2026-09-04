@@ -4,10 +4,6 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
-    "department": {
-      "model": "Department",
-      "namespace": "public"
-    },
     "location": {
       "model": "Location",
       "namespace": "public"
@@ -26,18 +22,6 @@
     },
     "vehicle": {
       "model": "Vehicle",
-      "namespace": "public"
-    },
-    "vehicleDepartmentOwner": {
-      "model": "VehicleDepartmentOwner",
-      "namespace": "public"
-    },
-    "vehicleDriver": {
-      "model": "VehicleDriver",
-      "namespace": "public"
-    },
-    "vehicleUserOwner": {
-      "model": "VehicleUserOwner",
       "namespace": "public"
     }
   },
@@ -79,16 +63,12 @@
             "codecId": "pg/text@1",
             "members": [
               {
-                "name": "admin",
-                "value": "admin"
+                "name": "employee",
+                "value": "employee"
               },
               {
-                "name": "user",
-                "value": "user"
-              },
-              {
-                "name": "driver",
-                "value": "driver"
+                "name": "fleet_admin",
+                "value": "fleet_admin"
               }
             ]
           },
@@ -108,134 +88,9 @@
                 "value": "inactive"
               }
             ]
-          },
-          "VehicleType": {
-            "codecId": "pg/text@1",
-            "members": [
-              {
-                "name": "jac",
-                "value": "jac"
-              },
-              {
-                "name": "hiace",
-                "value": "hiace"
-              }
-            ]
           }
         },
         "models": {
-          "Department": {
-            "fields": {
-              "code": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "createdAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "description": {
-                "nullable": true,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "id": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "isActive": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/bool@1",
-                  "kind": "scalar"
-                }
-              },
-              "name": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/text@1",
-                  "kind": "scalar"
-                }
-              },
-              "updatedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "members": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "departmentId"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              },
-              "vehicleOwnerships": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "departmentId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleDepartmentOwner",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "code": {
-                  "column": "code"
-                },
-                "createdAt": {
-                  "column": "createdAt"
-                },
-                "description": {
-                  "column": "description"
-                },
-                "id": {
-                  "column": "id"
-                },
-                "isActive": {
-                  "column": "isActive"
-                },
-                "name": {
-                  "column": "name"
-                },
-                "updatedAt": {
-                  "column": "updatedAt"
-                }
-              },
-              "namespaceId": "public",
-              "table": "department"
-            }
-          },
           "Location": {
             "fields": {
               "address": {
@@ -745,21 +600,14 @@
                   "kind": "scalar"
                 }
               },
-              "departmentId": {
+              "department": {
                 "nullable": true,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "email": {
-                "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
-              "firebaseUid": {
+              "email": {
                 "nullable": false,
                 "type": {
                   "codecId": "pg/text@1",
@@ -824,21 +672,6 @@
                   "namespace": "public"
                 }
               },
-              "department": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "departmentId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Department",
-                  "namespace": "public"
-                }
-              },
               "primaryRides": {
                 "cardinality": "1:N",
                 "on": {
@@ -853,36 +686,6 @@
                   "model": "Ride",
                   "namespace": "public"
                 }
-              },
-              "vehicleAssignments": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "driverId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleDriver",
-                  "namespace": "public"
-                }
-              },
-              "vehicleOwnerships": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "userId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleUserOwner",
-                  "namespace": "public"
-                }
               }
             },
             "storage": {
@@ -893,14 +696,11 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
-                "departmentId": {
-                  "column": "departmentId"
+                "department": {
+                  "column": "department"
                 },
                 "email": {
                   "column": "email"
-                },
-                "firebaseUid": {
-                  "column": "firebaseUid"
                 },
                 "id": {
                   "column": "id"
@@ -924,13 +724,6 @@
           },
           "Vehicle": {
             "fields": {
-              "capacity": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -949,6 +742,27 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "make": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "model": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -991,46 +805,10 @@
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
-                },
-                "valueSet": {
-                  "entityKind": "enum",
-                  "entityName": "VehicleType",
-                  "namespaceId": "public",
-                  "plane": "domain"
                 }
               }
             },
             "relations": {
-              "departmentOwners": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "vehicleId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleDepartmentOwner",
-                  "namespace": "public"
-                }
-              },
-              "driverAssignments": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "vehicleId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleDriver",
-                  "namespace": "public"
-                }
-              },
               "homeLocation": {
                 "cardinality": "N:1",
                 "on": {
@@ -1075,28 +853,10 @@
                   "model": "Ride",
                   "namespace": "public"
                 }
-              },
-              "userOwners": {
-                "cardinality": "1:N",
-                "on": {
-                  "localFields": [
-                    "id"
-                  ],
-                  "targetFields": [
-                    "vehicleId"
-                  ]
-                },
-                "to": {
-                  "model": "VehicleUserOwner",
-                  "namespace": "public"
-                }
               }
             },
             "storage": {
               "fields": {
-                "capacity": {
-                  "column": "capacity"
-                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -1105,6 +865,15 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "make": {
+                  "column": "make"
+                },
+                "model": {
+                  "column": "model"
+                },
+                "name": {
+                  "column": "name"
                 },
                 "notes": {
                   "column": "notes"
@@ -1125,202 +894,6 @@
               "namespaceId": "public",
               "table": "vehicle"
             }
-          },
-          "VehicleDepartmentOwner": {
-            "fields": {
-              "departmentId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "vehicleId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "department": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "departmentId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Department",
-                  "namespace": "public"
-                }
-              },
-              "vehicle": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "vehicleId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Vehicle",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "departmentId": {
-                  "column": "departmentId"
-                },
-                "vehicleId": {
-                  "column": "vehicleId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "vehicleDepartmentOwner"
-            }
-          },
-          "VehicleDriver": {
-            "fields": {
-              "assignedAt": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "kind": "scalar"
-                }
-              },
-              "driverId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "vehicleId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "driver": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "driverId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              },
-              "vehicle": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "vehicleId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Vehicle",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "assignedAt": {
-                  "column": "assignedAt"
-                },
-                "driverId": {
-                  "column": "driverId"
-                },
-                "vehicleId": {
-                  "column": "vehicleId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "vehicleDriver"
-            }
-          },
-          "VehicleUserOwner": {
-            "fields": {
-              "userId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              },
-              "vehicleId": {
-                "nullable": false,
-                "type": {
-                  "codecId": "pg/int4@1",
-                  "kind": "scalar"
-                }
-              }
-            },
-            "relations": {
-              "user": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "userId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "User",
-                  "namespace": "public"
-                }
-              },
-              "vehicle": {
-                "cardinality": "N:1",
-                "on": {
-                  "localFields": [
-                    "vehicleId"
-                  ],
-                  "targetFields": [
-                    "id"
-                  ]
-                },
-                "to": {
-                  "model": "Vehicle",
-                  "namespace": "public"
-                }
-              }
-            },
-            "storage": {
-              "fields": {
-                "userId": {
-                  "column": "userId"
-                },
-                "vehicleId": {
-                  "column": "vehicleId"
-                }
-              },
-              "namespaceId": "public",
-              "table": "vehicleUserOwner"
-            }
           }
         }
       }
@@ -1331,80 +904,6 @@
       "public": {
         "entries": {
           "table": {
-            "department": {
-              "columns": {
-                "code": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "createdAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "description": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": true
-                },
-                "id": {
-                  "codecId": "pg/int4@1",
-                  "default": {
-                    "expression": "autoincrement()",
-                    "kind": "function"
-                  },
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "isActive": {
-                  "codecId": "pg/bool@1",
-                  "default": {
-                    "kind": "literal",
-                    "value": true
-                  },
-                  "nativeType": "bool",
-                  "nullable": false
-                },
-                "name": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "updatedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [],
-              "indexes": [
-                {
-                  "columns": [
-                    "isActive"
-                  ],
-                  "name": "department_isActive_idx_77fe3ba1",
-                  "prefix": "department_isActive_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "id"
-                ]
-              },
-              "uniques": [
-                {
-                  "columns": [
-                    "code"
-                  ]
-                }
-              ]
-            },
             "location": {
               "columns": {
                 "address": {
@@ -1890,8 +1389,8 @@
             "user": {
               "checks": [
                 {
-                  "expression": "\"role\" IN ('admin', 'user', 'driver')",
-                  "name": "user_role_check_72c6234f",
+                  "expression": "\"role\" IN ('employee', 'fleet_admin')",
+                  "name": "user_role_check_381cd5ca",
                   "prefix": "user_role_check"
                 }
               ],
@@ -1910,17 +1409,12 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
-                "departmentId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
+                "department": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
                   "nullable": true
                 },
                 "email": {
-                  "codecId": "pg/text@1",
-                  "nativeType": "text",
-                  "nullable": false
-                },
-                "firebaseUid": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
@@ -1952,7 +1446,7 @@
                   "codecId": "pg/text@1",
                   "default": {
                     "kind": "literal",
-                    "value": "user"
+                    "value": "employee"
                   },
                   "nativeType": "text",
                   "nullable": false,
@@ -1969,34 +1463,8 @@
                   "nullable": false
                 }
               },
-              "foreignKeys": [
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "departmentId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "department"
-                  }
-                }
-              ],
+              "foreignKeys": [],
               "indexes": [
-                {
-                  "columns": [
-                    "departmentId"
-                  ],
-                  "name": "user_departmentId_idx_8e261ed8",
-                  "prefix": "user_departmentId_idx",
-                  "unique": false
-                },
                 {
                   "columns": [
                     "role",
@@ -2015,11 +1483,6 @@
               "uniques": [
                 {
                   "columns": [
-                    "firebaseUid"
-                  ]
-                },
-                {
-                  "columns": [
                     "email"
                   ]
                 }
@@ -2031,19 +1494,9 @@
                   "expression": "\"operationalStatus\" IN ('available', 'maintenance', 'inactive')",
                   "name": "vehicle_operationalStatus_check_77cb388a",
                   "prefix": "vehicle_operationalStatus_check"
-                },
-                {
-                  "expression": "\"vehicleType\" IN ('jac', 'hiace')",
-                  "name": "vehicle_vehicleType_check_a8b4e344",
-                  "prefix": "vehicle_vehicleType_check"
                 }
               ],
               "columns": {
-                "capacity": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -2065,6 +1518,21 @@
                     "kind": "function"
                   },
                   "nativeType": "int4",
+                  "nullable": false
+                },
+                "make": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "model": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
                   "nullable": false
                 },
                 "notes": {
@@ -2100,13 +1568,7 @@
                 "vehicleType": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": true,
-                  "valueSet": {
-                    "entityKind": "valueSet",
-                    "entityName": "VehicleType",
-                    "namespaceId": "public",
-                    "plane": "storage"
-                  }
+                  "nullable": true
                 }
               },
               "foreignKeys": [
@@ -2166,240 +1628,6 @@
                   ]
                 }
               ]
-            },
-            "vehicleDepartmentOwner": {
-              "columns": {
-                "departmentId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "vehicleId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "vehicleId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleDepartmentOwner"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicle"
-                  }
-                },
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "departmentId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleDepartmentOwner"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "department"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "departmentId"
-                  ],
-                  "name": "vehicleDepartmentOwner_departmentId_idx_8e261ed8",
-                  "prefix": "vehicleDepartmentOwner_departmentId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "vehicleId"
-                  ],
-                  "name": "vehicleDepartmentOwner_vehicleId_idx_e2df58fc",
-                  "prefix": "vehicleDepartmentOwner_vehicleId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "vehicleId",
-                  "departmentId"
-                ]
-              },
-              "uniques": []
-            },
-            "vehicleDriver": {
-              "columns": {
-                "assignedAt": {
-                  "codecId": "pg/timestamptz-string@1",
-                  "default": {
-                    "expression": "now()",
-                    "kind": "function"
-                  },
-                  "nativeType": "timestamptz",
-                  "nullable": false
-                },
-                "driverId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "vehicleId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "vehicleId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleDriver"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicle"
-                  }
-                },
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "driverId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleDriver"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "driverId"
-                  ],
-                  "name": "vehicleDriver_driverId_idx_8eed3317",
-                  "prefix": "vehicleDriver_driverId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "vehicleId"
-                  ],
-                  "name": "vehicleDriver_vehicleId_idx_e2df58fc",
-                  "prefix": "vehicleDriver_vehicleId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "vehicleId",
-                  "driverId"
-                ]
-              },
-              "uniques": []
-            },
-            "vehicleUserOwner": {
-              "columns": {
-                "userId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                },
-                "vehicleId": {
-                  "codecId": "pg/int4@1",
-                  "nativeType": "int4",
-                  "nullable": false
-                }
-              },
-              "foreignKeys": [
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "vehicleId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleUserOwner"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicle"
-                  }
-                },
-                {
-                  "onDelete": "restrict",
-                  "source": {
-                    "columns": [
-                      "userId"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "vehicleUserOwner"
-                  },
-                  "target": {
-                    "columns": [
-                      "id"
-                    ],
-                    "namespaceId": "public",
-                    "tableName": "user"
-                  }
-                }
-              ],
-              "indexes": [
-                {
-                  "columns": [
-                    "userId"
-                  ],
-                  "name": "vehicleUserOwner_userId_idx_a489d58a",
-                  "prefix": "vehicleUserOwner_userId_idx",
-                  "unique": false
-                },
-                {
-                  "columns": [
-                    "vehicleId"
-                  ],
-                  "name": "vehicleUserOwner_vehicleId_idx_e2df58fc",
-                  "prefix": "vehicleUserOwner_vehicleId_idx",
-                  "unique": false
-                }
-              ],
-              "primaryKey": {
-                "columns": [
-                  "vehicleId",
-                  "userId"
-                ]
-              },
-              "uniques": []
             }
           },
           "valueSet": {
@@ -2421,9 +1649,8 @@
             "UserRole": {
               "kind": "valueSet",
               "values": [
-                "admin",
-                "user",
-                "driver"
+                "employee",
+                "fleet_admin"
               ]
             },
             "VehicleOperationalStatus": {
@@ -2433,13 +1660,6 @@
                 "maintenance",
                 "inactive"
               ]
-            },
-            "VehicleType": {
-              "kind": "valueSet",
-              "values": [
-                "jac",
-                "hiace"
-              ]
             }
           }
         },
@@ -2447,27 +1667,12 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "028899e46759502266091340cea531d2ff7b538b8a72c3dae17008c284dc2f97"
+    "storageHash": "8da0aa151b17eb27a268c8e98dc83491502506219ab2fb625ee8269d0d4483f6"
   },
   "execution": {
-    "executionHash": "4396ace877b229b81feb2407ceaae3088f5bd3f549ca214b2914782a4744e456",
+    "executionHash": "7deaafb62cd7c9843901f06cc7dfd81cf0770f74c24dc8c6aaf146d35f2514e5",
     "mutations": {
       "defaults": [
-        {
-          "onCreate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "onUpdate": {
-            "id": "timestampNow",
-            "kind": "generator"
-          },
-          "ref": {
-            "column": "updatedAt",
-            "namespace": "public",
-            "table": "department"
-          }
-        },
         {
           "onCreate": {
             "id": "timestampNow",
