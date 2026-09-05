@@ -2,6 +2,32 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+From the `frontend` directory, copy `.env.example` to `.env.local` and fill in
+the values from Firebase Console → Project settings → Your apps → Web app configuration.
+For PowerShell:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+`.env.local` is ignored by Git. The configuration module and `.env.example` should
+be committed so other developers can configure their own environments.
+
+These `NEXT_PUBLIC_FIREBASE_*` values are browser-visible Firebase web configuration.
+Keep Firebase Admin credentials in the backend environment, never in `NEXT_PUBLIC_*` variables.
+Restart the development server after changing `.env.local`. For deployment, set the
+same variables in your hosting environment before building; Next.js embeds public
+environment variables into the client bundle at build time.
+
+## Test authentication
+
+In Firebase Console, open Authentication → Sign-in method and enable the
+Email/Password provider. Create a test user under the Users tab, then start both
+the backend and frontend. Start the backend from its directory with
+`node --experimental-strip-types src/server.ts`, then run `npm run dev` here.
+The sign-in form authenticates with Firebase and checks the returned bearer token
+against the backend's `/api/auth/me` endpoint.
+
 First, run the development server:
 
 ```bash

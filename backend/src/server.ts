@@ -1,9 +1,16 @@
+import 'dotenv/config';
 import express, { type Express, type NextFunction, type Request, type Response } from 'express';
+import cors from 'cors';
 import { requireFirebaseAuth } from './middleware/auth.ts';
 
 const app: Express = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env['FRONTEND_ORIGIN'] ?? 'http://localhost:3000',
+  }),
+);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('This is the server for CPGCBL Fleet Management');
