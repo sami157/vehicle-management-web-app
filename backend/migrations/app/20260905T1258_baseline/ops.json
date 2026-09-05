@@ -1,0 +1,2062 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.department",
+    "label": "Create table \"department\"",
+    "summary": "Creates table \"department\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "department"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"department\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"department\"",
+        "sql": "CREATE TABLE \"public\".\"department\" (\n  \"code\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"department\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.location",
+    "label": "Create table \"location\"",
+    "summary": "Creates table \"location\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "location"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"location\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"location\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"location\"",
+        "sql": "CREATE TABLE \"public\".\"location\" (\n  \"address\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"sortOrder\" int4 DEFAULT 0 NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"location\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"location\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.maintenanceRecord",
+    "label": "Create table \"maintenanceRecord\"",
+    "summary": "Creates table \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"maintenanceRecord\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"maintenanceRecord\"",
+        "sql": "CREATE TABLE \"public\".\"maintenanceRecord\" (\n  \"completedAt\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" int4 NOT NULL,\n  \"description\" text NOT NULL,\n  \"expectedEndAt\" timestamptz,\n  \"id\" SERIAL NOT NULL,\n  \"internalNotes\" text,\n  \"startedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"status\" text DEFAULT 'ongoing' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"vehicleId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"maintenanceRecord_status_check_43929e42\" CHECK (\"status\" IN ('ongoing', 'completed'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"maintenanceRecord\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.ride",
+    "label": "Create table \"ride\"",
+    "summary": "Creates table \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ride\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ride\"",
+        "sql": "CREATE TABLE \"public\".\"ride\" (\n  \"completedAt\" timestamptz,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"destinationLocationId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"notes\" text,\n  \"primaryRiderId\" int4 NOT NULL,\n  \"startLocationId\" int4 NOT NULL,\n  \"startedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"status\" text DEFAULT 'active' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"vehicleId\" int4 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"ride_status_check_af2bdd58\" CHECK (\"status\" IN ('active', 'completed', 'needs_review'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ride\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user",
+    "label": "Create table \"user\"",
+    "summary": "Creates table \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user\"",
+        "sql": "CREATE TABLE \"public\".\"user\" (\n  \"avatarUrl\" text,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"departmentId\" int4,\n  \"email\" text NOT NULL,\n  \"firebaseUid\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"isActive\" bool DEFAULT true NOT NULL,\n  \"name\" text NOT NULL,\n  \"role\" text DEFAULT 'user' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"user_role_check_72c6234f\" CHECK (\"role\" IN ('admin', 'user', 'driver'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.vehicle",
+    "label": "Create table \"vehicle\"",
+    "summary": "Creates table \"vehicle\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"vehicle\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"vehicle\"",
+        "sql": "CREATE TABLE \"public\".\"vehicle\" (\n  \"capacity\" int4 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"homeLocationId\" int4,\n  \"id\" SERIAL NOT NULL,\n  \"notes\" text,\n  \"operationalStatus\" text DEFAULT 'available' NOT NULL,\n  \"photoUrl\" text,\n  \"registrationNumber\" text NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  \"vehicleType\" text,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"vehicle_operationalStatus_check_77cb388a\" CHECK (\"operationalStatus\" IN ('available', 'maintenance', 'inactive')),\n  CONSTRAINT \"vehicle_vehicleType_check_a8b4e344\" CHECK (\"vehicleType\" IN ('jac', 'hiace'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"vehicle\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.vehicleDepartmentOwner",
+    "label": "Create table \"vehicleDepartmentOwner\"",
+    "summary": "Creates table \"vehicleDepartmentOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "vehicleDepartmentOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"vehicleDepartmentOwner\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"vehicleDepartmentOwner\"",
+        "sql": "CREATE TABLE \"public\".\"vehicleDepartmentOwner\" (\n  \"departmentId\" int4 NOT NULL,\n  \"vehicleId\" int4 NOT NULL,\n  PRIMARY KEY (\"vehicleId\", \"departmentId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"vehicleDepartmentOwner\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.vehicleDriver",
+    "label": "Create table \"vehicleDriver\"",
+    "summary": "Creates table \"vehicleDriver\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "vehicleDriver"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"vehicleDriver\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"vehicleDriver\"",
+        "sql": "CREATE TABLE \"public\".\"vehicleDriver\" (\n  \"assignedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"driverId\" int4 NOT NULL,\n  \"vehicleId\" int4 NOT NULL,\n  PRIMARY KEY (\"vehicleId\", \"driverId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"vehicleDriver\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.vehicleUserOwner",
+    "label": "Create table \"vehicleUserOwner\"",
+    "summary": "Creates table \"vehicleUserOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "vehicleUserOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"vehicleUserOwner\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"vehicleUserOwner\"",
+        "sql": "CREATE TABLE \"public\".\"vehicleUserOwner\" (\n  \"userId\" int4 NOT NULL,\n  \"vehicleId\" int4 NOT NULL,\n  PRIMARY KEY (\"vehicleId\", \"userId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"vehicleUserOwner\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.department.department_code_key",
+    "label": "Add unique constraint on \"department\" (code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "department_code_key",
+        "table": "department"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"department_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "department_code_key",
+          "public",
+          "\"public\".\"department\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"department_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"department\" ADD CONSTRAINT \"department_code_key\" UNIQUE (\"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"department_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "department_code_key",
+          "public",
+          "\"public\".\"department\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_firebaseUid_key",
+    "label": "Add unique constraint on \"user\" (firebaseUid)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_firebaseUid_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_firebaseUid_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_firebaseUid_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_firebaseUid_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_firebaseUid_key\" UNIQUE (\"firebaseUid\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_firebaseUid_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_firebaseUid_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user.user_email_key",
+    "label": "Add unique constraint on \"user\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_email_key",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"user\" ADD CONSTRAINT \"user_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_email_key",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.vehicle.vehicle_registrationNumber_key",
+    "label": "Add unique constraint on \"vehicle\" (registrationNumber)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "vehicle_registrationNumber_key",
+        "table": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"vehicle_registrationNumber_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicle_registrationNumber_key",
+          "public",
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"vehicle_registrationNumber_key\"",
+        "sql": "ALTER TABLE \"public\".\"vehicle\" ADD CONSTRAINT \"vehicle_registrationNumber_key\" UNIQUE (\"registrationNumber\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"vehicle_registrationNumber_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicle_registrationNumber_key",
+          "public",
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.department.department_isActive_idx_77fe3ba1",
+    "label": "Create index \"department_isActive_idx_77fe3ba1\" on \"department\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "department_isActive_idx_77fe3ba1",
+        "table": "department"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"department_isActive_idx_77fe3ba1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department_isActive_idx_77fe3ba1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"department_isActive_idx_77fe3ba1\"",
+        "sql": "CREATE INDEX \"department_isActive_idx_77fe3ba1\" ON \"public\".\"department\" (\"isActive\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"department_isActive_idx_77fe3ba1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"department_isActive_idx_77fe3ba1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.location.location_isActive_sortOrder_idx_43c1fe34",
+    "label": "Create index \"location_isActive_sortOrder_idx_43c1fe34\" on \"location\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "location_isActive_sortOrder_idx_43c1fe34",
+        "table": "location"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"location_isActive_sortOrder_idx_43c1fe34\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"location_isActive_sortOrder_idx_43c1fe34\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"location_isActive_sortOrder_idx_43c1fe34\"",
+        "sql": "CREATE INDEX \"location_isActive_sortOrder_idx_43c1fe34\" ON \"public\".\"location\" (\"isActive\", \"sortOrder\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"location_isActive_sortOrder_idx_43c1fe34\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"location_isActive_sortOrder_idx_43c1fe34\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.maintenanceRecord.maintenanceRecord_createdById_idx_8bf640ed",
+    "label": "Create index \"maintenanceRecord_createdById_idx_8bf640ed\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "maintenanceRecord_createdById_idx_8bf640ed",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"maintenanceRecord_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"maintenanceRecord_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"maintenanceRecord_createdById_idx_8bf640ed\" ON \"public\".\"maintenanceRecord\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"maintenanceRecord_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.maintenanceRecord.maintenanceRecord_expectedEndAt_idx_b540f38a",
+    "label": "Create index \"maintenanceRecord_expectedEndAt_idx_b540f38a\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "maintenanceRecord_expectedEndAt_idx_b540f38a",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"maintenanceRecord_expectedEndAt_idx_b540f38a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_expectedEndAt_idx_b540f38a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"maintenanceRecord_expectedEndAt_idx_b540f38a\"",
+        "sql": "CREATE INDEX \"maintenanceRecord_expectedEndAt_idx_b540f38a\" ON \"public\".\"maintenanceRecord\" (\"expectedEndAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"maintenanceRecord_expectedEndAt_idx_b540f38a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_expectedEndAt_idx_b540f38a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.maintenanceRecord.maintenanceRecord_vehicleId_status_idx_a4d785a6",
+    "label": "Create index \"maintenanceRecord_vehicleId_status_idx_a4d785a6\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "maintenanceRecord_vehicleId_status_idx_a4d785a6",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"maintenanceRecord_vehicleId_status_idx_a4d785a6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_vehicleId_status_idx_a4d785a6\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"maintenanceRecord_vehicleId_status_idx_a4d785a6\"",
+        "sql": "CREATE INDEX \"maintenanceRecord_vehicleId_status_idx_a4d785a6\" ON \"public\".\"maintenanceRecord\" (\"vehicleId\", \"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"maintenanceRecord_vehicleId_status_idx_a4d785a6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenanceRecord_vehicleId_status_idx_a4d785a6\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.maintenanceRecord.maintenance_active_vehicle_0c063cf3",
+    "label": "Create index \"maintenance_active_vehicle_0c063cf3\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "maintenance_active_vehicle_0c063cf3",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"maintenance_active_vehicle_0c063cf3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenance_active_vehicle_0c063cf3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"maintenance_active_vehicle_0c063cf3\"",
+        "sql": "CREATE UNIQUE INDEX \"maintenance_active_vehicle_0c063cf3\" ON \"public\".\"maintenanceRecord\" (\"vehicleId\") WHERE ((status = 'ongoing'))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"maintenance_active_vehicle_0c063cf3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"maintenance_active_vehicle_0c063cf3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_active_rider_f660706a",
+    "label": "Create index \"ride_active_rider_f660706a\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_active_rider_f660706a",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_active_rider_f660706a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_active_rider_f660706a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_active_rider_f660706a\"",
+        "sql": "CREATE UNIQUE INDEX \"ride_active_rider_f660706a\" ON \"public\".\"ride\" (\"primaryRiderId\") WHERE ((status = 'active'))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_active_rider_f660706a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_active_rider_f660706a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_active_vehicle_cce92904",
+    "label": "Create index \"ride_active_vehicle_cce92904\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_active_vehicle_cce92904",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_active_vehicle_cce92904\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_active_vehicle_cce92904\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_active_vehicle_cce92904\"",
+        "sql": "CREATE UNIQUE INDEX \"ride_active_vehicle_cce92904\" ON \"public\".\"ride\" (\"vehicleId\") WHERE ((status = 'active'))",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_active_vehicle_cce92904\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_active_vehicle_cce92904\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_destinationLocationId_idx_307b052b",
+    "label": "Create index \"ride_destinationLocationId_idx_307b052b\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_destinationLocationId_idx_307b052b",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_destinationLocationId_idx_307b052b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_destinationLocationId_idx_307b052b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_destinationLocationId_idx_307b052b\"",
+        "sql": "CREATE INDEX \"ride_destinationLocationId_idx_307b052b\" ON \"public\".\"ride\" (\"destinationLocationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_destinationLocationId_idx_307b052b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_destinationLocationId_idx_307b052b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_primaryRiderId_startedAt_idx_13053851",
+    "label": "Create index \"ride_primaryRiderId_startedAt_idx_13053851\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_primaryRiderId_startedAt_idx_13053851",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_primaryRiderId_startedAt_idx_13053851\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_primaryRiderId_startedAt_idx_13053851\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_primaryRiderId_startedAt_idx_13053851\"",
+        "sql": "CREATE INDEX \"ride_primaryRiderId_startedAt_idx_13053851\" ON \"public\".\"ride\" (\"primaryRiderId\", \"startedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_primaryRiderId_startedAt_idx_13053851\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_primaryRiderId_startedAt_idx_13053851\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_startLocationId_idx_a57ab12b",
+    "label": "Create index \"ride_startLocationId_idx_a57ab12b\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_startLocationId_idx_a57ab12b",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_startLocationId_idx_a57ab12b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_startLocationId_idx_a57ab12b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_startLocationId_idx_a57ab12b\"",
+        "sql": "CREATE INDEX \"ride_startLocationId_idx_a57ab12b\" ON \"public\".\"ride\" (\"startLocationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_startLocationId_idx_a57ab12b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_startLocationId_idx_a57ab12b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_status_startedAt_idx_06109915",
+    "label": "Create index \"ride_status_startedAt_idx_06109915\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_status_startedAt_idx_06109915",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_status_startedAt_idx_06109915\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_status_startedAt_idx_06109915\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_status_startedAt_idx_06109915\"",
+        "sql": "CREATE INDEX \"ride_status_startedAt_idx_06109915\" ON \"public\".\"ride\" (\"status\", \"startedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_status_startedAt_idx_06109915\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_status_startedAt_idx_06109915\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.ride.ride_vehicleId_startedAt_idx_47280d4e",
+    "label": "Create index \"ride_vehicleId_startedAt_idx_47280d4e\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ride_vehicleId_startedAt_idx_47280d4e",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ride_vehicleId_startedAt_idx_47280d4e\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_vehicleId_startedAt_idx_47280d4e\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ride_vehicleId_startedAt_idx_47280d4e\"",
+        "sql": "CREATE INDEX \"ride_vehicleId_startedAt_idx_47280d4e\" ON \"public\".\"ride\" (\"vehicleId\", \"startedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ride_vehicleId_startedAt_idx_47280d4e\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"ride_vehicleId_startedAt_idx_47280d4e\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.user.user_departmentId_idx_8e261ed8",
+    "label": "Create index \"user_departmentId_idx_8e261ed8\" on \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "user_departmentId_idx_8e261ed8",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"user_departmentId_idx_8e261ed8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"user_departmentId_idx_8e261ed8\"",
+        "sql": "CREATE INDEX \"user_departmentId_idx_8e261ed8\" ON \"public\".\"user\" (\"departmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"user_departmentId_idx_8e261ed8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.user.user_role_isActive_idx_d369089a",
+    "label": "Create index \"user_role_isActive_idx_d369089a\" on \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "user_role_isActive_idx_d369089a",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"user_role_isActive_idx_d369089a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_role_isActive_idx_d369089a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"user_role_isActive_idx_d369089a\"",
+        "sql": "CREATE INDEX \"user_role_isActive_idx_d369089a\" ON \"public\".\"user\" (\"role\", \"isActive\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"user_role_isActive_idx_d369089a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_role_isActive_idx_d369089a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicle.vehicle_homeLocationId_idx_e9f8f2ea",
+    "label": "Create index \"vehicle_homeLocationId_idx_e9f8f2ea\" on \"vehicle\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicle_homeLocationId_idx_e9f8f2ea",
+        "table": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicle_homeLocationId_idx_e9f8f2ea\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_homeLocationId_idx_e9f8f2ea\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicle_homeLocationId_idx_e9f8f2ea\"",
+        "sql": "CREATE INDEX \"vehicle_homeLocationId_idx_e9f8f2ea\" ON \"public\".\"vehicle\" (\"homeLocationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicle_homeLocationId_idx_e9f8f2ea\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_homeLocationId_idx_e9f8f2ea\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicle.vehicle_operationalStatus_idx_5fecacdf",
+    "label": "Create index \"vehicle_operationalStatus_idx_5fecacdf\" on \"vehicle\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicle_operationalStatus_idx_5fecacdf",
+        "table": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicle_operationalStatus_idx_5fecacdf\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_operationalStatus_idx_5fecacdf\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicle_operationalStatus_idx_5fecacdf\"",
+        "sql": "CREATE INDEX \"vehicle_operationalStatus_idx_5fecacdf\" ON \"public\".\"vehicle\" (\"operationalStatus\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicle_operationalStatus_idx_5fecacdf\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_operationalStatus_idx_5fecacdf\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicle.vehicle_vehicleType_idx_2294d164",
+    "label": "Create index \"vehicle_vehicleType_idx_2294d164\" on \"vehicle\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicle_vehicleType_idx_2294d164",
+        "table": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicle_vehicleType_idx_2294d164\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_vehicleType_idx_2294d164\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicle_vehicleType_idx_2294d164\"",
+        "sql": "CREATE INDEX \"vehicle_vehicleType_idx_2294d164\" ON \"public\".\"vehicle\" (\"vehicleType\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicle_vehicleType_idx_2294d164\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicle_vehicleType_idx_2294d164\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleDepartmentOwner.vehicleDepartmentOwner_departmentId_idx_8e261ed8",
+    "label": "Create index \"vehicleDepartmentOwner_departmentId_idx_8e261ed8\" on \"vehicleDepartmentOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleDepartmentOwner_departmentId_idx_8e261ed8",
+        "table": "vehicleDepartmentOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleDepartmentOwner_departmentId_idx_8e261ed8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleDepartmentOwner_departmentId_idx_8e261ed8\"",
+        "sql": "CREATE INDEX \"vehicleDepartmentOwner_departmentId_idx_8e261ed8\" ON \"public\".\"vehicleDepartmentOwner\" (\"departmentId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleDepartmentOwner_departmentId_idx_8e261ed8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner_departmentId_idx_8e261ed8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleDepartmentOwner.vehicleDepartmentOwner_vehicleId_idx_e2df58fc",
+    "label": "Create index \"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\" on \"vehicleDepartmentOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleDepartmentOwner_vehicleId_idx_e2df58fc",
+        "table": "vehicleDepartmentOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\"",
+        "sql": "CREATE INDEX \"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\" ON \"public\".\"vehicleDepartmentOwner\" (\"vehicleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDepartmentOwner_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleDriver.vehicleDriver_driverId_idx_8eed3317",
+    "label": "Create index \"vehicleDriver_driverId_idx_8eed3317\" on \"vehicleDriver\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleDriver_driverId_idx_8eed3317",
+        "table": "vehicleDriver"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleDriver_driverId_idx_8eed3317\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver_driverId_idx_8eed3317\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleDriver_driverId_idx_8eed3317\"",
+        "sql": "CREATE INDEX \"vehicleDriver_driverId_idx_8eed3317\" ON \"public\".\"vehicleDriver\" (\"driverId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleDriver_driverId_idx_8eed3317\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver_driverId_idx_8eed3317\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleDriver.vehicleDriver_vehicleId_idx_e2df58fc",
+    "label": "Create index \"vehicleDriver_vehicleId_idx_e2df58fc\" on \"vehicleDriver\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleDriver_vehicleId_idx_e2df58fc",
+        "table": "vehicleDriver"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleDriver_vehicleId_idx_e2df58fc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleDriver_vehicleId_idx_e2df58fc\"",
+        "sql": "CREATE INDEX \"vehicleDriver_vehicleId_idx_e2df58fc\" ON \"public\".\"vehicleDriver\" (\"vehicleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleDriver_vehicleId_idx_e2df58fc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleDriver_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleUserOwner.vehicleUserOwner_userId_idx_a489d58a",
+    "label": "Create index \"vehicleUserOwner_userId_idx_a489d58a\" on \"vehicleUserOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleUserOwner_userId_idx_a489d58a",
+        "table": "vehicleUserOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleUserOwner_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner_userId_idx_a489d58a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleUserOwner_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"vehicleUserOwner_userId_idx_a489d58a\" ON \"public\".\"vehicleUserOwner\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleUserOwner_userId_idx_a489d58a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner_userId_idx_a489d58a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.vehicleUserOwner.vehicleUserOwner_vehicleId_idx_e2df58fc",
+    "label": "Create index \"vehicleUserOwner_vehicleId_idx_e2df58fc\" on \"vehicleUserOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "vehicleUserOwner_vehicleId_idx_e2df58fc",
+        "table": "vehicleUserOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"vehicleUserOwner_vehicleId_idx_e2df58fc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"vehicleUserOwner_vehicleId_idx_e2df58fc\"",
+        "sql": "CREATE INDEX \"vehicleUserOwner_vehicleId_idx_e2df58fc\" ON \"public\".\"vehicleUserOwner\" (\"vehicleId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"vehicleUserOwner_vehicleId_idx_e2df58fc\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"vehicleUserOwner_vehicleId_idx_e2df58fc\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.maintenanceRecord.maintenanceRecord_vehicleId_fkey",
+    "label": "Add foreign key \"maintenanceRecord_vehicleId_fkey\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "maintenanceRecord_vehicleId_fkey",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"maintenanceRecord_vehicleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "maintenanceRecord_vehicleId_fkey",
+          "public",
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"maintenanceRecord_vehicleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"maintenanceRecord\"\nADD CONSTRAINT \"maintenanceRecord_vehicleId_fkey\"\nFOREIGN KEY (\"vehicleId\")\nREFERENCES \"public\".\"vehicle\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"maintenanceRecord_vehicleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "maintenanceRecord_vehicleId_fkey",
+          "public",
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.maintenanceRecord.maintenanceRecord_createdById_fkey",
+    "label": "Add foreign key \"maintenanceRecord_createdById_fkey\" on \"maintenanceRecord\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "maintenanceRecord_createdById_fkey",
+        "table": "maintenanceRecord"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"maintenanceRecord_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "maintenanceRecord_createdById_fkey",
+          "public",
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"maintenanceRecord_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"maintenanceRecord\"\nADD CONSTRAINT \"maintenanceRecord_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"maintenanceRecord_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "maintenanceRecord_createdById_fkey",
+          "public",
+          "\"public\".\"maintenanceRecord\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ride.ride_vehicleId_fkey",
+    "label": "Add foreign key \"ride_vehicleId_fkey\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ride_vehicleId_fkey",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ride_vehicleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_vehicleId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ride_vehicleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ride\"\nADD CONSTRAINT \"ride_vehicleId_fkey\"\nFOREIGN KEY (\"vehicleId\")\nREFERENCES \"public\".\"vehicle\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ride_vehicleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_vehicleId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ride.ride_primaryRiderId_fkey",
+    "label": "Add foreign key \"ride_primaryRiderId_fkey\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ride_primaryRiderId_fkey",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ride_primaryRiderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_primaryRiderId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ride_primaryRiderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ride\"\nADD CONSTRAINT \"ride_primaryRiderId_fkey\"\nFOREIGN KEY (\"primaryRiderId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ride_primaryRiderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_primaryRiderId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ride.ride_startLocationId_fkey",
+    "label": "Add foreign key \"ride_startLocationId_fkey\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ride_startLocationId_fkey",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ride_startLocationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_startLocationId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ride_startLocationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ride\"\nADD CONSTRAINT \"ride_startLocationId_fkey\"\nFOREIGN KEY (\"startLocationId\")\nREFERENCES \"public\".\"location\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ride_startLocationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_startLocationId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ride.ride_destinationLocationId_fkey",
+    "label": "Add foreign key \"ride_destinationLocationId_fkey\" on \"ride\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ride_destinationLocationId_fkey",
+        "table": "ride"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ride_destinationLocationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_destinationLocationId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ride_destinationLocationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ride\"\nADD CONSTRAINT \"ride_destinationLocationId_fkey\"\nFOREIGN KEY (\"destinationLocationId\")\nREFERENCES \"public\".\"location\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ride_destinationLocationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ride_destinationLocationId_fkey",
+          "public",
+          "\"public\".\"ride\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.user.user_departmentId_fkey",
+    "label": "Add foreign key \"user_departmentId_fkey\" on \"user\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "user_departmentId_fkey",
+        "table": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"user_departmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_departmentId_fkey",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"user_departmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"user\"\nADD CONSTRAINT \"user_departmentId_fkey\"\nFOREIGN KEY (\"departmentId\")\nREFERENCES \"public\".\"department\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"user_departmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_departmentId_fkey",
+          "public",
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicle.vehicle_homeLocationId_fkey",
+    "label": "Add foreign key \"vehicle_homeLocationId_fkey\" on \"vehicle\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicle_homeLocationId_fkey",
+        "table": "vehicle"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicle_homeLocationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicle_homeLocationId_fkey",
+          "public",
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicle_homeLocationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicle\"\nADD CONSTRAINT \"vehicle_homeLocationId_fkey\"\nFOREIGN KEY (\"homeLocationId\")\nREFERENCES \"public\".\"location\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicle_homeLocationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicle_homeLocationId_fkey",
+          "public",
+          "\"public\".\"vehicle\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleDepartmentOwner.vehicleDepartmentOwner_vehicleId_fkey",
+    "label": "Add foreign key \"vehicleDepartmentOwner_vehicleId_fkey\" on \"vehicleDepartmentOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleDepartmentOwner_vehicleId_fkey",
+        "table": "vehicleDepartmentOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleDepartmentOwner_vehicleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDepartmentOwner_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleDepartmentOwner_vehicleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleDepartmentOwner\"\nADD CONSTRAINT \"vehicleDepartmentOwner_vehicleId_fkey\"\nFOREIGN KEY (\"vehicleId\")\nREFERENCES \"public\".\"vehicle\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleDepartmentOwner_vehicleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDepartmentOwner_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleDepartmentOwner.vehicleDepartmentOwner_departmentId_fkey",
+    "label": "Add foreign key \"vehicleDepartmentOwner_departmentId_fkey\" on \"vehicleDepartmentOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleDepartmentOwner_departmentId_fkey",
+        "table": "vehicleDepartmentOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleDepartmentOwner_departmentId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDepartmentOwner_departmentId_fkey",
+          "public",
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleDepartmentOwner_departmentId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleDepartmentOwner\"\nADD CONSTRAINT \"vehicleDepartmentOwner_departmentId_fkey\"\nFOREIGN KEY (\"departmentId\")\nREFERENCES \"public\".\"department\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleDepartmentOwner_departmentId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDepartmentOwner_departmentId_fkey",
+          "public",
+          "\"public\".\"vehicleDepartmentOwner\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleDriver.vehicleDriver_vehicleId_fkey",
+    "label": "Add foreign key \"vehicleDriver_vehicleId_fkey\" on \"vehicleDriver\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleDriver_vehicleId_fkey",
+        "table": "vehicleDriver"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleDriver_vehicleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDriver_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleDriver_vehicleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleDriver\"\nADD CONSTRAINT \"vehicleDriver_vehicleId_fkey\"\nFOREIGN KEY (\"vehicleId\")\nREFERENCES \"public\".\"vehicle\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleDriver_vehicleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDriver_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleDriver.vehicleDriver_driverId_fkey",
+    "label": "Add foreign key \"vehicleDriver_driverId_fkey\" on \"vehicleDriver\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleDriver_driverId_fkey",
+        "table": "vehicleDriver"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleDriver_driverId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDriver_driverId_fkey",
+          "public",
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleDriver_driverId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleDriver\"\nADD CONSTRAINT \"vehicleDriver_driverId_fkey\"\nFOREIGN KEY (\"driverId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleDriver_driverId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleDriver_driverId_fkey",
+          "public",
+          "\"public\".\"vehicleDriver\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleUserOwner.vehicleUserOwner_vehicleId_fkey",
+    "label": "Add foreign key \"vehicleUserOwner_vehicleId_fkey\" on \"vehicleUserOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleUserOwner_vehicleId_fkey",
+        "table": "vehicleUserOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleUserOwner_vehicleId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleUserOwner_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleUserOwner_vehicleId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleUserOwner\"\nADD CONSTRAINT \"vehicleUserOwner_vehicleId_fkey\"\nFOREIGN KEY (\"vehicleId\")\nREFERENCES \"public\".\"vehicle\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleUserOwner_vehicleId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleUserOwner_vehicleId_fkey",
+          "public",
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.vehicleUserOwner.vehicleUserOwner_userId_fkey",
+    "label": "Add foreign key \"vehicleUserOwner_userId_fkey\" on \"vehicleUserOwner\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "vehicleUserOwner_userId_fkey",
+        "table": "vehicleUserOwner"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"vehicleUserOwner_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleUserOwner_userId_fkey",
+          "public",
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"vehicleUserOwner_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"vehicleUserOwner\"\nADD CONSTRAINT \"vehicleUserOwner_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"user\" (\"id\")\nON DELETE RESTRICT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"vehicleUserOwner_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "vehicleUserOwner_userId_fkey",
+          "public",
+          "\"public\".\"vehicleUserOwner\""
+        ]
+      }
+    ]
+  }
+]

@@ -1,5 +1,11 @@
 .neon
-.env.local
+.env.*
+!.env.example
 node_modules/
 dist/
-.env
+
+# Firebase and other local service credentials.
+service-account*.json
+firebase-service-account*.json
+firebase-admin-key*.json
+*.pem

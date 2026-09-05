@@ -25,7 +25,7 @@ enum RideStatus {
 }
 
 enum MaintenanceStatus {
-  active
+  ongoing
   completed
 }
 
@@ -54,7 +54,7 @@ model Vehicle {
   id                 Int                      @id @default(autoincrement())
   registrationNumber String                   @unique
   vehicleType        VehicleType?
-  imageUrl           String?
+  photoUrl           String?
   capacity           Int
   operationalStatus  VehicleOperationalStatus @default(available)
   homeLocationId     Int?
@@ -130,8 +130,8 @@ model MaintenanceRecord {
   id            Int               @id @default(autoincrement())
   vehicleId     Int
   vehicle       Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
-  status        MaintenanceStatus @default(active)
-  reason        String
+  status        MaintenanceStatus @default(ongoing)
+  description   String
   startedAt     TimestamptzString  @default(now())
   expectedEndAt TimestamptzString?
   completedAt   TimestamptzString?
@@ -143,7 +143,7 @@ model MaintenanceRecord {
 
   @@index([vehicleId, status])
   @@index([expectedEndAt])
-  @@index([vehicleId], where: "(status = 'active')", unique: true, name: "maintenance_active_vehicle")
+  @@index([vehicleId], where: "(status = 'ongoing')", unique: true, name: "maintenance_active_vehicle")
 }
 
 model VehicleDriver {

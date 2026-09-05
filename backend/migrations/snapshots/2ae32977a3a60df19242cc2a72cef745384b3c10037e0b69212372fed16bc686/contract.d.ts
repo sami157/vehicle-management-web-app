@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'028899e46759502266091340cea531d2ff7b538b8a72c3dae17008c284dc2f97'>;
+  StorageHashBase<'2ae32977a3a60df19242cc2a72cef745384b3c10037e0b69212372fed16bc686'>;
 export type ExecutionHash =
   ExecutionHashBase<'4396ace877b229b81feb2407ceaae3088f5bd3f549ca214b2914782a4744e456'>;
 export type ProfileHash =
@@ -253,7 +253,6 @@ export type FieldOutputTypes = {
     readonly Location: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
-      readonly code: CodecTypes['pg/text@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly isActive: CodecTypes['pg/bool@1']['output'];
@@ -264,8 +263,8 @@ export type FieldOutputTypes = {
     readonly MaintenanceRecord: {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly vehicleId: CodecTypes['pg/int4@1']['output'];
-      readonly status: 'active' | 'completed';
-      readonly reason: CodecTypes['pg/text@1']['output'];
+      readonly status: 'ongoing' | 'completed';
+      readonly description: CodecTypes['pg/text@1']['output'];
       readonly startedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly expectedEndAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
@@ -303,6 +302,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly registrationNumber: CodecTypes['pg/text@1']['output'];
       readonly vehicleType: 'jac' | 'hiace' | null;
+      readonly photoUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly capacity: CodecTypes['pg/int4@1']['output'];
       readonly operationalStatus: 'available' | 'maintenance' | 'inactive';
       readonly homeLocationId: CodecTypes['pg/int4@1']['output'] | null;
@@ -339,7 +339,6 @@ export type FieldInputTypes = {
     readonly Location: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
-      readonly code: CodecTypes['pg/text@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly isActive: CodecTypes['pg/bool@1']['input'];
@@ -350,8 +349,8 @@ export type FieldInputTypes = {
     readonly MaintenanceRecord: {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly vehicleId: CodecTypes['pg/int4@1']['input'];
-      readonly status: 'active' | 'completed';
-      readonly reason: CodecTypes['pg/text@1']['input'];
+      readonly status: 'ongoing' | 'completed';
+      readonly description: CodecTypes['pg/text@1']['input'];
       readonly startedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly expectedEndAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
@@ -389,6 +388,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly registrationNumber: CodecTypes['pg/text@1']['input'];
       readonly vehicleType: 'jac' | 'hiace' | null;
+      readonly photoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly capacity: CodecTypes['pg/int4@1']['input'];
       readonly operationalStatus: 'available' | 'maintenance' | 'inactive';
       readonly homeLocationId: CodecTypes['pg/int4@1']['input'] | null;
@@ -424,7 +424,6 @@ export type StorageColumnTypes = {
     };
     readonly location: {
       readonly address: CodecTypes['pg/text@1']['output'] | null;
-      readonly code: CodecTypes['pg/text@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -437,12 +436,12 @@ export type StorageColumnTypes = {
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly createdById: CodecTypes['pg/int4@1']['output'];
+      readonly description: CodecTypes['pg/text@1']['output'];
       readonly expectedEndAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly internalNotes: CodecTypes['pg/text@1']['output'] | null;
-      readonly reason: CodecTypes['pg/text@1']['output'];
       readonly startedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly status: 'active' | 'completed';
+      readonly status: 'ongoing' | 'completed';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly vehicleId: CodecTypes['pg/int4@1']['output'];
     };
@@ -478,6 +477,7 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly operationalStatus: 'available' | 'maintenance' | 'inactive';
+      readonly photoUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly registrationNumber: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly vehicleType: 'jac' | 'hiace' | null;
@@ -510,7 +510,6 @@ export type StorageColumnInputTypes = {
     };
     readonly location: {
       readonly address: CodecTypes['pg/text@1']['input'] | null;
-      readonly code: CodecTypes['pg/text@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -523,12 +522,12 @@ export type StorageColumnInputTypes = {
       readonly completedAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly createdById: CodecTypes['pg/int4@1']['input'];
+      readonly description: CodecTypes['pg/text@1']['input'];
       readonly expectedEndAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly internalNotes: CodecTypes['pg/text@1']['input'] | null;
-      readonly reason: CodecTypes['pg/text@1']['input'];
       readonly startedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly status: 'active' | 'completed';
+      readonly status: 'ongoing' | 'completed';
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vehicleId: CodecTypes['pg/int4@1']['input'];
     };
@@ -564,6 +563,7 @@ export type StorageColumnInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly operationalStatus: 'available' | 'maintenance' | 'inactive';
+      readonly photoUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly registrationNumber: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly vehicleType: 'jac' | 'hiace' | null;
@@ -676,11 +676,6 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
-                readonly code: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
                 readonly description: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
@@ -722,7 +717,7 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['code'] }];
+              uniques: readonly [];
               indexes: readonly [
                 {
                   readonly name: 'location_isActive_sortOrder_idx_43c1fe34';
@@ -755,10 +750,10 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'active'>;
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'ongoing'>;
                   };
                 };
-                readonly reason: {
+                readonly description: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
@@ -817,10 +812,10 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
-                  readonly name: 'maintenance_active_vehicle_cce92904';
+                  readonly name: 'maintenance_active_vehicle_0c063cf3';
                   readonly prefix: 'maintenance_active_vehicle';
                   readonly columns: readonly ['vehicleId'];
-                  readonly where: "(status = 'active')";
+                  readonly where: "(status = 'ongoing')";
                   readonly unique: true;
                 },
                 {
@@ -1145,6 +1140,11 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                 };
+                readonly photoUrl: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
                 readonly capacity: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -1396,7 +1396,7 @@ type ContractBase = Omit<
           readonly valueSet: {
             readonly MaintenanceStatus: {
               readonly kind: 'valueSet';
-              readonly values: readonly ['active', 'completed'];
+              readonly values: readonly ['ongoing', 'completed'];
             };
             readonly RideStatus: {
               readonly kind: 'valueSet';
@@ -1536,10 +1536,6 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly code: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
               readonly description: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1606,7 +1602,6 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
-                readonly code: { readonly column: 'code' };
                 readonly description: { readonly column: 'description' };
                 readonly address: { readonly column: 'address' };
                 readonly isActive: { readonly column: 'isActive' };
@@ -1630,7 +1625,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
-              readonly reason: {
+              readonly description: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -1706,7 +1701,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly vehicleId: { readonly column: 'vehicleId' };
                 readonly status: { readonly column: 'status' };
-                readonly reason: { readonly column: 'reason' };
+                readonly description: { readonly column: 'description' };
                 readonly startedAt: { readonly column: 'startedAt' };
                 readonly expectedEndAt: { readonly column: 'expectedEndAt' };
                 readonly completedAt: { readonly column: 'completedAt' };
@@ -1971,6 +1966,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly photoUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly capacity: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -2074,6 +2073,7 @@ type ContractBase = Omit<
                 readonly id: { readonly column: 'id' };
                 readonly registrationNumber: { readonly column: 'registrationNumber' };
                 readonly vehicleType: { readonly column: 'vehicleType' };
+                readonly photoUrl: { readonly column: 'photoUrl' };
                 readonly capacity: { readonly column: 'capacity' };
                 readonly operationalStatus: { readonly column: 'operationalStatus' };
                 readonly homeLocationId: { readonly column: 'homeLocationId' };
@@ -2253,7 +2253,7 @@ type ContractBase = Omit<
           readonly MaintenanceStatus: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
-              { readonly name: 'active'; readonly value: 'active' },
+              { readonly name: 'ongoing'; readonly value: 'ongoing' },
               { readonly name: 'completed'; readonly value: 'completed' },
             ];
           };

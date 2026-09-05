@@ -5,9 +5,14 @@ coverage/
 .vercel/
 
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
+
+# Firebase and other local service credentials.
+service-account*.json
+firebase-service-account*.json
+firebase-admin-key*.json
+*.pem
 
 npm-debug.log*
 *.tsbuildinfo
